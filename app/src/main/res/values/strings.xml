@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">TravelPath</string>
+    <string name="ville_monument">Ville ou site</string>
+    <string name="decouverte">Decouverte</string>
+    <string name="restauration">Restauration</string>
+    <string name="loisir">Loisir</string>
+    <string name="culture">Culture</string>
+    <string name="budget">Budget</string>
+    <string name="duree">Duree</string>
+    <string name="duree_indice">Durée (ex: 2h30 ou 45min)</string>
+    <string name="effort">Effort</string>
+    <string name="faible">Faible</string>
+    <string name="moyen">Moyen</string>
+    <string name="fort">Fort</string>
+    <string name="valider">Valider</string>
+    <string name="pdf">Telecharger PDF</string>
+</resources>

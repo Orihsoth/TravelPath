@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="#F5F5F5">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:gravity="center"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <EditText
+            android:id="@+id/editRecherche"
+            android:hint="@string/ville_monument"
+            android:drawableEnd="@android:drawable/ic_menu_search"
+            android:padding="12dp"
+            android:background="@android:drawable/edit_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/chipGroup"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <GridLayout
+            android:id="@+id/checkGrid"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:columnCount="2"
+            android:alignmentMode="alignMargins"
+            android:useDefaultMargins="true">
+
+            <CheckBox
+                android:id="@+id/cbCulture"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/culture"/>
+
+            <CheckBox
+                android:id="@+id/cbLoisir"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/loisir"/>
+
+            <CheckBox
+                android:id="@+id/cbResto"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/restauration"/>
+
+            <CheckBox
+                android:id="@+id/cbDecouverte"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/decouverte"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/budget"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/duree"/>
+            <EditText
+                android:id="@+id/editBudget"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:hint="@string/budget"
+                android:layout_marginTop="16dp"/>
+            <EditText
+                android:id="@+id/editDuree"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/duree_indice"
+                android:inputType="text"
+                android:layout_marginTop="16dp"/>
+        </GridLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/effort"/>
+
+        <LinearLayout
+            android:id="@+id/container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:weightSum="3">
+
+            <LinearLayout
+                android:id="@+id/itemFaible"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:gravity="center">
+
+                <CheckBox
+                    android:id="@+id/cbFaible"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/faible"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/itemMoyen"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <CheckBox
+                    android:id="@+id/cbMoyen"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/moyen" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/itemFort"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:gravity="center">
+
+                <CheckBox
+                    android:id="@+id/cbFort"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/fort"/>
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/valider"
+            android:text="@string/valider"
+            android:layout_marginTop="40dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+    </LinearLayout>
+</ScrollView>
