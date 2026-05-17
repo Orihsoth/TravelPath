@@ -50,16 +50,12 @@ public class MainActivity extends AppCompatActivity {
     Runnable searchRunnable;
 
     public boolean isValidDuree(String input) {
-
         String regex = "(?i)^([0-9]{1,2}h([0-5][0-9])?|[0-9]{1,3}min)$";
-
         return input.matches(regex);
     }
 
     public boolean isValidBudget(String input) {
-
         String regex = "(?i)^([0-9]{1,2}h([0-5][0-9])?|[0-9]{1,3}min)$";
-
         return input.matches(regex);
     }
 
@@ -84,39 +80,24 @@ public class MainActivity extends AppCompatActivity {
         // On part du principe que l'effort est moyen
         cbMoyen.setChecked(true);
 
-        recyclerSuggestions.setLayoutManager(
-                new LinearLayoutManager(this));
+        recyclerSuggestions.setLayoutManager(new LinearLayoutManager(this));
 
-        suggestionAdapter = new SuggestionAdapter(
-                suggestions,
+        suggestionAdapter = new SuggestionAdapter(suggestions,
                 text -> {
-
                     addTag(text);
-
                     editRecherche.setText("");
-
                     recyclerSuggestions.setVisibility(View.GONE);
                 });
 
         recyclerSuggestions.setAdapter(suggestionAdapter);
-
         editRecherche.setThreshold(1);
-
-        adapter = new ArrayAdapter<>(
-                this,
-                android.R.layout.simple_dropdown_item_1line,
-                suggestions
-        );
-
+        adapter = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, suggestions);
         editRecherche.setAdapter(adapter);
 
         // Clic suggestion
         editRecherche.setOnItemClickListener((parent, view, position, id) -> {
-
             String adresse = parent.getItemAtPosition(position).toString();
-
             addTag(adresse);
-
             editRecherche.setText("");
         });
 
@@ -129,12 +110,8 @@ public class MainActivity extends AppCompatActivity {
             public void onTextChanged(CharSequence s, int start, int before, int count) {
 
                 handler.removeCallbacksAndMessages(null);
-
                 if (s.length() >= 3) {
-
-                    searchRunnable = () ->
-                            rechercherAdresse(s.toString());
-
+                    searchRunnable = () -> rechercherAdresse(s.toString());
                     handler.postDelayed(searchRunnable, 800);
                 }
             }
@@ -228,73 +205,41 @@ public class MainActivity extends AppCompatActivity {
 
             try {
 
-                String urlString =
-                        "https://photon.komoot.io/api/?q="
-                                + URLEncoder.encode(text, "UTF-8")
-                                + "&limit=5";
-
+                String urlString = "https://photon.komoot.io/api/?q=" + URLEncoder.encode(text, "UTF-8") + "&limit=5";
                 URL url = new URL(urlString);
 
-                HttpURLConnection conn =
-                        (HttpURLConnection) url.openConnection();
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                 conn.setConnectTimeout(5000);
                 conn.setReadTimeout(5000);
 
                 conn.setRequestProperty("User-Agent", "TravelPath");
                 conn.setRequestProperty("Accept", "application/json");
 
-                BufferedReader reader =
-                        new BufferedReader(
-                                new InputStreamReader(
-                                        conn.getInputStream()
-                                )
-                        );
-
+                BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
                 StringBuilder result = new StringBuilder();
-
                 String line;
 
                 while ((line = reader.readLine()) != null) {
                     result.append(line);
                 }
 
-                JSONObject json =
-                        new JSONObject(result.toString());
-
-                JSONArray features =
-                        json.getJSONArray("features");
-
+                JSONObject json = new JSONObject(result.toString());
+                JSONArray features = json.getJSONArray("features");
                 suggestions.clear();
 
                 for (int i = 0; i < features.length(); i++) {
 
-                    JSONObject feature =
-                            features.getJSONObject(i);
-
-                    JSONObject props =
-                            feature.getJSONObject("properties");
-
-                    String nom =
-                            props.optString("name", "");
-
-                    String city =
-                            props.optString("city", "");
-
-                    String country =
-                            props.optString("country", "");
-
-                    String adresse =
-                            nom + ", " +
-                                    city + ", " +
-                                    country;
-
+                    JSONObject feature = features.getJSONObject(i);
+                    JSONObject props = feature.getJSONObject("properties");
+                    String nom = props.optString("name", "");
+                    String city = props.optString("city", "");
+                    String country = props.optString("country", "");
+                    String adresse = nom + ", " + city + ", " + country;
                     suggestions.add(adresse);
                 }
 
                 runOnUiThread(() -> {
-
                     suggestionAdapter.notifyDataSetChanged();
-
                     if (suggestions.isEmpty()) {
                         recyclerSuggestions.setVisibility(View.GONE);
                     } else {

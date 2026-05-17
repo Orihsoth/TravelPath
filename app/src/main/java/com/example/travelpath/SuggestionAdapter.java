@@ -37,27 +37,18 @@ public class SuggestionAdapter
 
     @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(
-            @NonNull ViewGroup parent,
-            int viewType) {
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 
-        View v = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.item_suggestion, parent, false);
-
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_suggestion, parent, false);
         return new ViewHolder(v);
     }
 
     @Override
-    public void onBindViewHolder(
-            @NonNull ViewHolder holder,
-            int position) {
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
 
         String text = list.get(position);
-
-        holder.txt.setText("📍 " + text);
-
-        holder.itemView.setOnClickListener(v ->
-                listener.onClick(text));
+        holder.txt.setText(text);
+        holder.itemView.setOnClickListener(v -> listener.onClick(text));
     }
 
     @Override

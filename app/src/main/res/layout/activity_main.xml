@@ -18,6 +18,7 @@
             android:layout_height="wrap_content"
             android:hint="@string/ville_monument"
             android:padding="12dp"
+            android:layout_marginTop="40dp"
             android:background="@android:drawable/edit_text"/>
 
         <androidx.recyclerview.widget.RecyclerView
@@ -162,7 +163,9 @@
             android:id="@+id/valider"
             android:text="@string/valider"
             android:layout_marginTop="40dp"
+            android:layout_gravity="center_horizontal"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
+
     </LinearLayout>
 </ScrollView>

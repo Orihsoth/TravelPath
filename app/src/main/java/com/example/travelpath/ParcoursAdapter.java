@@ -32,8 +32,7 @@ public class ParcoursAdapter extends RecyclerView.Adapter<ParcoursAdapter.ViewHo
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.item_parcours, parent, false);
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_parcours, parent, false);
         return new ViewHolder(v);
     }
 
@@ -43,37 +42,19 @@ public class ParcoursAdapter extends RecyclerView.Adapter<ParcoursAdapter.ViewHo
         Parcours p = list.get(position);
         p.liked = prefs.getBoolean(p.id, false);
         holder.titre.setText(p.titre);
-        holder.info.setText(
-                p.prix + "€ • " +
-                        p.duree + " • " +
-                        p.adresse
-        );
-
+        holder.info.setText(p.prix + "€ • " + p.duree + " • " + p.adresse);
         holder.image.setImageResource(p.image);
+        holder.details.setVisibility(p.isExpanded ? View.VISIBLE : View.GONE);
 
-        holder.details.setVisibility(
-                p.isExpanded ?
-                        View.VISIBLE :
-                        View.GONE
-        );
-
-        holder.like.setImageResource(
-                p.liked ?
-                        R.drawable.ic_heart_checked :
-                        R.drawable.ic_heart_plus
-        );
+        holder.like.setImageResource(p.liked ? R.drawable.ic_heart_checked : R.drawable.ic_heart_plus);
 
         holder.itemView.setOnClickListener(v -> {
 
             int pos = holder.getAdapterPosition();
 
             if (pos != RecyclerView.NO_POSITION) {
-
                 Parcours parcours = list.get(pos);
-
-                parcours.isExpanded =
-                        !parcours.isExpanded;
-
+                parcours.isExpanded = !parcours.isExpanded;
                 notifyItemChanged(pos);
             }
         });
@@ -81,22 +62,10 @@ public class ParcoursAdapter extends RecyclerView.Adapter<ParcoursAdapter.ViewHo
         holder.like.setOnClickListener(v -> {
 
             int pos = holder.getAdapterPosition();
-
             if (pos != RecyclerView.NO_POSITION) {
-
                 Parcours parcours = list.get(pos);
-
-                parcours.liked =
-                        !parcours.liked;
-
-                // sauvegarde téléphone
-                prefs.edit()
-                        .putBoolean(
-                                parcours.titre + parcours.adresse,
-                                parcours.liked
-                        )
-                        .apply();
-
+                parcours.liked = !parcours.liked;
+                prefs.edit().putBoolean(parcours.titre + parcours.adresse, parcours.liked).apply();
                 notifyItemChanged(pos);
             }
         });
@@ -104,66 +73,33 @@ public class ParcoursAdapter extends RecyclerView.Adapter<ParcoursAdapter.ViewHo
         holder.details.removeAllViews();
 
         for (Etape e : p.etapes) {
-
-            View view = LayoutInflater.from(context)
-                    .inflate(
-                            R.layout.item_etape,
-                            holder.details,
-                            false
-                    );
-
-            ImageView img =
-                    view.findViewById(R.id.imgEtape);
-
-            TextView txt =
-                    view.findViewById(R.id.txtEtape);
-
-            Glide.with(context)
-                    .load(e.imageUrl)
-                    .placeholder(R.drawable.comedie)
-                    .error(R.drawable.comedie)
-                    .into(img);
-
-            txt.setText(
-                    e.nom + "\n" +
-                            e.adresse + "\n" +
-                            "Trajet : " + e.trajet + "\n" +
-                            "Durée : " + e.duree + "\n" +
-                            e.prix + "€"
-            );
-
+            View view = LayoutInflater.from(context).inflate(R.layout.item_etape, holder.details, false);
+            ImageView img = view.findViewById(R.id.imgEtape);
+            TextView txt = view.findViewById(R.id.txtEtape);
+            Glide.with(context).load(e.imageUrl).placeholder(R.drawable.comedie).error(R.drawable.comedie).into(img);
+            txt.setText(e.nom + "\n" + e.adresse + "\n" + "Trajet : " + e.trajet + "\n" + "Durée : " + e.duree + "\n" + e.prix + "€");
             holder.details.addView(view);
         }
-
-        holder.btnPdf.setOnClickListener(v ->
-                exportPDF(p));
+        holder.btnPdf.setOnClickListener(v -> exportPDF(p));
     }
 
-    //Pour l'instant on fait pas grand chose dans le téléchargement pdf
+
     private void exportPDF(Parcours p) {
 
         PdfDocument document = new PdfDocument();
-
-        PdfDocument.PageInfo pageInfo =
-                new PdfDocument.PageInfo.Builder(595, 842, 1).create();
-
+        PdfDocument.PageInfo pageInfo = new PdfDocument.PageInfo.Builder(595, 842, 1).create();
         PdfDocument.Page page = document.startPage(pageInfo);
-
         Canvas canvas = page.getCanvas();
-
         Paint titlePaint = new Paint();
         titlePaint.setTextSize(24);
         titlePaint.setFakeBoldText(true);
-
         Paint textPaint = new Paint();
         textPaint.setTextSize(14);
-
         Paint linePaint = new Paint();
         linePaint.setStrokeWidth(2);
 
         int y = 40;
 
-        // TITRE
         canvas.drawText("TRAVELPATH", 200, y, titlePaint);
 
         y += 40;
@@ -187,28 +123,23 @@ public class ParcoursAdapter extends RecyclerView.Adapter<ParcoursAdapter.ViewHo
 
         y += 30;
 
-        // IMAGE PARCOURS
-        Bitmap mainBmp = BitmapFactory.decodeResource(
-                context.getResources(),
-                p.image
-        );
 
-        Bitmap mainScaled =
-                Bitmap.createScaledBitmap(mainBmp, 520, 180, false);
+        Bitmap mainBmp = BitmapFactory.decodeResource(context.getResources(), p.image);
+
+        Bitmap mainScaled = Bitmap.createScaledBitmap(mainBmp, 520, 180, false);
 
         canvas.drawBitmap(mainScaled, 30, y, null);
 
         y += 220;
 
-        // ETAPES
+
         for (int i = 0; i < p.etapes.size(); i++) {
 
             Etape e = p.etapes.get(i);
 
-            // Si page pleine -> nouvelle page
+
             if (y > 700) {
                 document.finishPage(page);
-
                 page = document.startPage(pageInfo);
                 canvas = page.getCanvas();
                 y = 40;
@@ -221,14 +152,10 @@ public class ParcoursAdapter extends RecyclerView.Adapter<ParcoursAdapter.ViewHo
 
             y += 25;
 
-            // IMAGE étape
-            Bitmap bmp = BitmapFactory.decodeResource(
-                    context.getResources(),
-                    e.image
-            );
 
-            Bitmap scaled =
-                    Bitmap.createScaledBitmap(bmp, 220, 120, false);
+            Bitmap bmp = BitmapFactory.decodeResource(context.getResources(), e.image);
+
+            Bitmap scaled = Bitmap.createScaledBitmap(bmp, 220, 120, false);
 
             canvas.drawBitmap(scaled, 30, y, null);
 
@@ -257,11 +184,7 @@ public class ParcoursAdapter extends RecyclerView.Adapter<ParcoursAdapter.ViewHo
 
             document.writeTo(new FileOutputStream(file));
 
-            Toast.makeText(
-                    context,
-                    "PDF créé : " + file.getAbsolutePath(),
-                    Toast.LENGTH_LONG
-            ).show();
+            Toast.makeText(context, "PDF créé : " + file.getAbsolutePath(), Toast.LENGTH_LONG).show();
 
         } catch (Exception e) {
             e.printStackTrace();
