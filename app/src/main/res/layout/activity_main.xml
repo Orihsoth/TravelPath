@@ -8,18 +8,23 @@
     <LinearLayout
         android:orientation="vertical"
         android:padding="16dp"
-        android:gravity="center"
+        android:gravity="top"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <EditText
+        <AutoCompleteTextView
             android:id="@+id/editRecherche"
-            android:hint="@string/ville_monument"
-            android:drawableEnd="@android:drawable/ic_menu_search"
-            android:padding="12dp"
-            android:background="@android:drawable/edit_text"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:hint="@string/ville_monument"
+            android:padding="12dp"
+            android:background="@android:drawable/edit_text"/>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerSuggestions"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"/>
 
         <com.google.android.material.chip.ChipGroup
             android:id="@+id/chipGroup"

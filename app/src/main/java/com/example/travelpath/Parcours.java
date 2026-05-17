@@ -5,7 +5,7 @@ import java.util.List;
 
 public class Parcours {
 
-    public String titre, duree, adresse;
+    public String titre, duree, adresse, id;
     public int image, prix;
     public boolean isExpanded = false;
     public boolean liked = false;
@@ -18,5 +18,6 @@ public class Parcours {
         this.prix = prix;
         this.duree = duree;
         this.adresse = adresse;
+        this.id = titre + adresse;
     }
 }

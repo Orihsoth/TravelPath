@@ -2,6 +2,13 @@ package com.example.travelpath;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -12,18 +19,35 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLEncoder;
 import java.util.ArrayList;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 public class MainActivity extends AppCompatActivity {
 
     ChipGroup chipGroup;
-    EditText editRecherche;
+    AutoCompleteTextView editRecherche;
     EditText editDuree;
     CheckBox cbFaible, cbMoyen, cbFort;
     CheckBox cbCulture, cbLoisir, cbResto, cbDecouverte;
     EditText editBudget;
     Button btnValider;
     int b;
+    RecyclerView recyclerSuggestions;
+    SuggestionAdapter suggestionAdapter;
+
+    ArrayAdapter<String> adapter;
+    ArrayList<String> suggestions = new ArrayList<>();
+    Handler handler = new Handler(Looper.getMainLooper());
+    Runnable searchRunnable;
 
     public boolean isValidDuree(String input) {
 
@@ -55,20 +79,68 @@ public class MainActivity extends AppCompatActivity {
         cbDecouverte = findViewById(R.id.cbDecouverte);
         editBudget = findViewById(R.id.editBudget);
         btnValider = findViewById(R.id.valider);
-
+        recyclerSuggestions = findViewById(R.id.recyclerSuggestions);
+        editRecherche.setDropDownAnchor(R.id.editRecherche);
         // On part du principe que l'effort est moyen
         cbMoyen.setChecked(true);
 
-        //Ajout d'un lieu en tag
-        editRecherche.setOnEditorActionListener((v, actionId, event) -> {
-            String text = editRecherche.getText().toString().trim();
+        recyclerSuggestions.setLayoutManager(
+                new LinearLayoutManager(this));
 
-            if (!text.isEmpty()) {
-                addTag(text);
-                editRecherche.setText("");
+        suggestionAdapter = new SuggestionAdapter(
+                suggestions,
+                text -> {
+
+                    addTag(text);
+
+                    editRecherche.setText("");
+
+                    recyclerSuggestions.setVisibility(View.GONE);
+                });
+
+        recyclerSuggestions.setAdapter(suggestionAdapter);
+
+        editRecherche.setThreshold(1);
+
+        adapter = new ArrayAdapter<>(
+                this,
+                android.R.layout.simple_dropdown_item_1line,
+                suggestions
+        );
+
+        editRecherche.setAdapter(adapter);
+
+        // Clic suggestion
+        editRecherche.setOnItemClickListener((parent, view, position, id) -> {
+
+            String adresse = parent.getItemAtPosition(position).toString();
+
+            addTag(adresse);
+
+            editRecherche.setText("");
+        });
+
+        // Recherche live
+        editRecherche.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                handler.removeCallbacksAndMessages(null);
+
+                if (s.length() >= 3) {
+
+                    searchRunnable = () ->
+                            rechercherAdresse(s.toString());
+
+                    handler.postDelayed(searchRunnable, 800);
+                }
             }
 
-            return true;
+            @Override
+            public void afterTextChanged(Editable s) {}
         });
 
         setupSingleSelection();
@@ -148,6 +220,93 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
         });
 
+    }
+
+    private void rechercherAdresse(String text) {
+
+        new Thread(() -> {
+
+            try {
+
+                String urlString =
+                        "https://photon.komoot.io/api/?q="
+                                + URLEncoder.encode(text, "UTF-8")
+                                + "&limit=5";
+
+                URL url = new URL(urlString);
+
+                HttpURLConnection conn =
+                        (HttpURLConnection) url.openConnection();
+                conn.setConnectTimeout(5000);
+                conn.setReadTimeout(5000);
+
+                conn.setRequestProperty("User-Agent", "TravelPath");
+                conn.setRequestProperty("Accept", "application/json");
+
+                BufferedReader reader =
+                        new BufferedReader(
+                                new InputStreamReader(
+                                        conn.getInputStream()
+                                )
+                        );
+
+                StringBuilder result = new StringBuilder();
+
+                String line;
+
+                while ((line = reader.readLine()) != null) {
+                    result.append(line);
+                }
+
+                JSONObject json =
+                        new JSONObject(result.toString());
+
+                JSONArray features =
+                        json.getJSONArray("features");
+
+                suggestions.clear();
+
+                for (int i = 0; i < features.length(); i++) {
+
+                    JSONObject feature =
+                            features.getJSONObject(i);
+
+                    JSONObject props =
+                            feature.getJSONObject("properties");
+
+                    String nom =
+                            props.optString("name", "");
+
+                    String city =
+                            props.optString("city", "");
+
+                    String country =
+                            props.optString("country", "");
+
+                    String adresse =
+                            nom + ", " +
+                                    city + ", " +
+                                    country;
+
+                    suggestions.add(adresse);
+                }
+
+                runOnUiThread(() -> {
+
+                    suggestionAdapter.notifyDataSetChanged();
+
+                    if (suggestions.isEmpty()) {
+                        recyclerSuggestions.setVisibility(View.GONE);
+                    } else {
+                        recyclerSuggestions.setVisibility(View.VISIBLE);
+                    }
+                });
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+        }).start();
     }
 
     public void addTag(String text) {

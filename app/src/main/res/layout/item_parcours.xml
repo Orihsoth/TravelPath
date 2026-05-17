@@ -1,13 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content">
 
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
+        android:elevation="6dp"
+        android:padding="8dp"
         tools:ignore="MissingConstraints">
 
         <LinearLayout
@@ -18,37 +21,47 @@
             <ImageView
                 android:id="@+id/imageParcours"
                 android:layout_width="match_parent"
-                android:layout_height="200dp"/>
+                android:layout_height="200dp"
+                android:scaleType="centerCrop"/>
 
             <TextView
+                android:id="@+id/titreParcours"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/titreParcours"/>
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:padding="8dp"/>
 
             <TextView
+                android:id="@+id/infoParcours"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/infoParcours"/>
+                android:paddingStart="8dp"
+                android:paddingBottom="8dp"/>
 
             <ImageView
                 android:id="@+id/likeBtn"
                 android:layout_width="40dp"
-                android:layout_height="40dp"/>
+                android:layout_height="40dp"
+                android:layout_gravity="end"
+                android:layout_marginEnd="8dp"/>
 
             <Button
+                android:id="@+id/btnPdf"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/btnPdf"
-                android:text="@string/pdf"/>
+                android:text="Télécharger PDF"/>
 
             <LinearLayout
+                android:id="@+id/layoutDetails"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/layoutDetails"
                 android:orientation="vertical"
-                android:visibility="gone"/>
+                android:visibility="gone"
+                android:padding="8dp"/>
 
         </LinearLayout>
+
     </androidx.cardview.widget.CardView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
